@@ -14,23 +14,18 @@
 
 </head>
 <body>
-    <div class="row">
-        <div class="col-sm-offset-12"/>
-        
-        <div class="col-sm-8">PNGファイルを選択してください</div>
+    <form id="Form1" method="post" runat="server" enctype="multipart/form-data">
+    <h2>Icon変換アプリ</h2>
+        <h3>PngからIconに変換します</h3>
+       
+
+     <p>PNGファイルを選択してください</p>
                     
-        <div class="col-sm-2" />
-        <div class="col-sm-8">
-            <input id="File1" type="file" />
-        </div>
-        <div class="col-sm-2" />
-        <div class="col-sm-2" />
-        <div class="col-sm-12" />
-        <div class="col-sm-4" />
-        <div class="col-sm-4" >
-            <input id="Button1" type="button" value="変換開始" />
-        </div>
-        <div class="col-sm-4" />
-    </div>
+     <input id="File1" type="file" name="postdata" />
+            <%--<input id="Button1" type="button" value="変換開始" OnClick="Button1_Click" />--%>
+     <asp:Button runat="server" id="button1" Text="OK" OnClick="Button1_Click"/>
+     
+     
+     </form>
 </body>
 </html>
