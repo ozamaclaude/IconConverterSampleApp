@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -20,6 +21,9 @@ namespace IconConverterSampleApp
             var data = Request.Form["postdata"];
 
             var data1 = Request.Files["postdata"];
+
+            var aaa = DropDownList1.SelectedItem;
+
             data1.SaveAs("C:\\Users\\M.Ozama\\forJob\\dev\\temp\\aaaaa.png");
 
             using (FileStream stream = File.OpenWrite(@"C:\\Users\\M.Ozama\\forJob\\dev\\temp\\test.ico"))
@@ -27,7 +31,6 @@ namespace IconConverterSampleApp
                 Bitmap bitmap = (Bitmap)System.Drawing.Image.FromFile("C:\\Users\\M.Ozama\\forJob\\dev\\temp\\aaaaa.png");
                 Icon.FromHandle(bitmap.GetHicon()).Save(stream);
             }
-            
         }
     }
 }
