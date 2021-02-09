@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Web;
@@ -24,6 +25,7 @@ namespace IconConverterApp
         {
             var fPfx = CurrentFileNamePrefix();
             //var pngFileName = fPfx + "_output.png";
+            var pngPath = Path.Combine(_savePath, fPfx + FileUpLoad1.FileName);
             if (FileUpLoad1.HasFile)
             {
                 FileUpLoad1.SaveAs(Path.Combine(_savePath, fPfx + FileUpLoad1.FileName));
@@ -33,6 +35,18 @@ namespace IconConverterApp
             {
                 Label1.Text = "No File Uploaded.";
             }
+
+            // ここでは、Iconファイルに変換するルートとする
+            if(CheckBox1.Checked)
+            {
+                var icoFilePath = Path.Combine(_savePath, fPfx + ".ico");
+                using (FileStream stream = File.OpenWrite(icoFilePath))
+                {
+                    Bitmap bitmap = (Bitmap)System.Drawing.Image.FromFile(pngPath);
+                    Icon.FromHandle(bitmap.GetHicon()).Save(stream);
+                }
+            }
+
         }
         private static string CurrentFileNamePrefix()
         {

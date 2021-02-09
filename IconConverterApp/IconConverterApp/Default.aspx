@@ -17,7 +17,7 @@
             <asp:ListItem Value="3">300</asp:ListItem>
             <asp:ListItem Value="4">400</asp:ListItem>
         </asp:DropDownList>
-            </div>
+        </div>
 
         <asp:CheckBox ID="CheckBox1" runat="server"></asp:CheckBox>
 
@@ -26,8 +26,6 @@
         <asp:Button id="UploadBtn" OnClick="UploadBtn_Click" runat="server" Width="105px" />
         </div>
         <asp:Label ID="Label1" runat="server"/>
-    
-
 
     </div>
 
