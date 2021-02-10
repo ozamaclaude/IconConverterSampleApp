@@ -19,11 +19,11 @@
         </asp:DropDownList>
         </div>
 
-        <asp:CheckBox ID="CheckBox1" runat="server"></asp:CheckBox>
+        <asp:CheckBox ID="CheckBox1" runat="server" AutoPostBack="True" OnCheckedChanged="StatusChanged"/>
 
         <br />
         <div class="m-2">
-        <asp:Button id="UploadBtn" OnClick="UploadBtn_Click" runat="server" Width="105px" />
+        <asp:Button id="UploadBtn" BackColor="Blue" ForeColor="White" OnClick="UploadBtn_Click" runat="server" Width="105px" />
         </div>
         <asp:Label ID="Label1" runat="server"/>
 
@@ -32,30 +32,31 @@
     <div class="row">
         <div class="col-md-4">
             <h2>Getting started</h2>
+    <asp:GridView ID="GridView1" EnableViewState="false" runat="server" AutoGenerateColumns="false" DataKeyNames="RegisterNumber" 
+        OnPageIndexChanging="GridView1_PageIndexChanging" 
+        OnRowCancelingEdit="GridView1_RowCancelingEdit" 
+        OnRowDeleting="GridView1_RowDeleting" 
+        OnRowEditing="GridView1_RowEditing" 
+        OnRowUpdating="GridView1_RowUpdating">
+        <Columns>
+            <asp:BoundField DataField="RegisterNumber" HeaderText="登録No" ReadOnly="true" />
+            <asp:BoundField DataField="RegisterDate" HeaderText="登録日" />
+            <asp:BoundField DataField="RegisterFileName" HeaderText="登録ファイル名" />
+            <asp:BoundField DataField="Notes" HeaderText="備考" />
+            <asp:CommandField ShowEditButton="true" />
+            <asp:ButtonField ButtonType="Button" CommandName="Select" HeaderText="選択" 
+                ShowHeader="True" Text="ダウンロード" />
+        </Columns>
+    </asp:GridView>
+        </div>
+        <div class="col-md-4">
+            <h2>Getting started</h2>
             <p>
                 ASP.NET Web Forms lets you build dynamic websites using a familiar drag-and-drop, event-driven model.
             A design surface and hundreds of controls and components let you rapidly build sophisticated, powerful UI-driven sites with data access.
             </p>
             <p>
                 <a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301948">Learn more &raquo;</a>
-            </p>
-        </div>
-        <div class="col-md-4">
-            <h2>Get more libraries</h2>
-            <p>
-                NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.
-            </p>
-            <p>
-                <a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301949">Learn more &raquo;</a>
-            </p>
-        </div>
-        <div class="col-md-4">
-            <h2>Web Hosting</h2>
-            <p>
-                You can easily find a web hosting company that offers the right mix of features and price for your applications.
-            </p>
-            <p>
-                <a class="btn btn-default" href="https://go.microsoft.com/fwlink/?LinkId=301950">Learn more &raquo;</a>
             </p>
         </div>
     </div>
