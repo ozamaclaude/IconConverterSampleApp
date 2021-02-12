@@ -6,6 +6,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using Image = System.Drawing.Image;
 
 namespace IconConverterApp
 {
@@ -21,9 +22,15 @@ namespace IconConverterApp
 
         private List<RegisteredFile> _registeredFiles = new List<RegisteredFile>();
         private const string _savePath = @"C:\\Users\M.Ozama\forJob\dev\temp\";
+
+        private int _orgImageWidth { get; set; }
+        private int _orgImageHeight { get; set; }
+
         protected void Page_Load(object sender, EventArgs e)
         {
             UploadBtn.Text = "変換";
+
+            GridView1.Columns[0].HeaderStyle.Width = 200;
             //if (CheckBox1.Checked)
             //{
             //    UploadBtn.Text = "アップロード";
@@ -48,29 +55,34 @@ namespace IconConverterApp
         }
         protected void UploadBtn_Click(object sender, EventArgs e)
         {
+            if (!HasUploadFile())
+            {
+                Label1.Text = "No File Uploaded.";
+                string testScript = "alert('ファイルが指定されていません');";
+                ClientScript.RegisterClientScriptBlock(this.GetType(), "key", testScript, true);
+                return;
+            }
+
+
+            var aa = FileUpLoad1.Width;
+            //ResizeImageKeepingAspectRatio();
             var fPfx = CurrentFileNamePrefix();
             //var pngFileName = fPfx + "_output.png";
             var pngPath = Path.Combine(_savePath, fPfx + FileUpLoad1.FileName);
-            if (FileUpLoad1.HasFile)
-            {
-                FileUpLoad1.SaveAs(Path.Combine(_savePath, fPfx + FileUpLoad1.FileName));
-                Label1.Text = "File Uploaded: " + FileUpLoad1.FileName;
 
-                _registeredFiles.Add(new RegisteredFile
-                {
-                    RegisterNumber = "1",
-                    RegisterDate = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
-                    RegisterFileName = FileUpLoad1.FileName
-                }); ;
-                LoadGrid();
-            }
-            else
+            FileUpLoad1.SaveAs(Path.Combine(_savePath, fPfx + FileUpLoad1.FileName));
+            Label1.Text = "File Uploaded: " + FileUpLoad1.FileName;
+
+            _registeredFiles.Add(new RegisteredFile
             {
-                Label1.Text = "No File Uploaded.";
-            }
+                RegisterNumber = "1",
+                RegisterDate = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
+                RegisterFileName = FileUpLoad1.FileName
+            }); ;
+            LoadGrid();
 
             // ここでは、Iconファイルに変換するルートとする
-            if(!CheckBox1.Checked)
+            if (!CheckBox1.Checked)
             {
                 var icoFilePath = Path.Combine(_savePath, fPfx + ".ico");
                 using (FileStream stream = File.OpenWrite(icoFilePath))
@@ -82,6 +94,24 @@ namespace IconConverterApp
 
         }
 
+        private bool HasUploadFile()
+        {
+            if (FileUpLoad1.HasFile) { return true; }
+            return false;
+        }
+
+
+
+        private void ResizeImageKeepingAspectRatio(string sourcePath, string destPath)
+        {
+            var selected = DropDownList1.SelectedValue;
+            if(selected == "0") { return; }
+
+            using (Image image = Image.FromFile(sourcePath))
+            {
+                var imgWidth = image.Width;
+            }
+        }
         protected void GridView1_PageIndexChanging(object sender, GridViewPageEventArgs e)
         {
 

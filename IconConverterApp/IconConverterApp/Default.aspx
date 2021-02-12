@@ -19,7 +19,7 @@
         </asp:DropDownList>
         </div>
 
-        <asp:Label Text="ファイルアップロード" runat="server"/>
+        <asp:Label Text="ファイルアップロードのみ" runat="server"/>
         <asp:CheckBox ID="CheckBox1" runat="server" AutoPostBack="True" OnCheckedChanged="StatusChanged"/>
 
         <br />
@@ -33,15 +33,18 @@
     <div class="row">
         <div class="col-md-4">
             <h2>登録状況</h2>
-              <asp:GridView ID="GridView1" EnableViewState="false" runat="server" AutoGenerateColumns="false" DataKeyNames="RegisterNumber" 
-                OnPageIndexChanging="GridView1_PageIndexChanging" 
-                OnRowCancelingEdit="GridView1_RowCancelingEdit" 
-                OnRowDeleting="GridView1_RowDeleting" 
-                OnRowEditing="GridView1_RowEditing" 
+              <asp:GridView ID="GridView1" EnableViewState="false" runat="server" 
+                  HeaderStyle-BackColor="Blue"
+                  HeaderStyle-ForeColor="White"
+                  AutoGenerateColumns="false" DataKeyNames="RegisterNumber" 
+                  OnPageIndexChanging="GridView1_PageIndexChanging" 
+                  OnRowCancelingEdit="GridView1_RowCancelingEdit" 
+                  OnRowDeleting="GridView1_RowDeleting" 
+                  OnRowEditing="GridView1_RowEditing" 
                   OnRowCommand="Grid1_RowCommand"
-                OnRowUpdating="GridView1_RowUpdating">
+                  OnRowUpdating="GridView1_RowUpdating">
                 <Columns>
-                    <asp:BoundField DataField="RegisterNumber" HeaderText="登録No" ReadOnly="true" />
+                    <asp:BoundField DataField="RegisterNumber" HeaderText="登録No" HeaderStyle-Width="100" ReadOnly="true" />
                     <asp:BoundField DataField="RegisterDate" HeaderText="登録日" />
                     <asp:BoundField DataField="RegisterFileName" HeaderText="登録ファイル名" />
                     <asp:BoundField DataField="Notes" HeaderText="備考" />
@@ -52,7 +55,7 @@
             </asp:GridView>
         </div>
     </div>
-    <div>
+    <div class="row">
         <div class="col-md-4">
             <h2>カレンダー</h2>
             <asp:Calendar id="calendar1" runat="server">
