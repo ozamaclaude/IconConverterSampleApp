@@ -70,7 +70,7 @@ namespace IconConverterApp
             }
 
             // ここでは、Iconファイルに変換するルートとする
-            if(CheckBox1.Checked)
+            if(!CheckBox1.Checked)
             {
                 var icoFilePath = Path.Combine(_savePath, fPfx + ".ico");
                 using (FileStream stream = File.OpenWrite(icoFilePath))
@@ -117,9 +117,26 @@ namespace IconConverterApp
 
         }
 
+        protected void Grid1_RowCommand(Object sender, GridViewCommandEventArgs e)
+        {
+            if (e.CommandName == "Select")
+            {
+                var aaa = 1;
+                int index = Convert.ToInt32(e.CommandArgument);
+                
+                GridViewRow selectedRow = GridView1.Rows[index];
+                //TableCell contactName = selectedRow.Cells[1];
+                //string contact = contactName.Text;
+
+                
+            }
+        }
+
         private static string CurrentFileNamePrefix()
         {
             return DateTime.Now.ToString("yyyyMMddHHmmss_");
         }
+
+
     }
 }
