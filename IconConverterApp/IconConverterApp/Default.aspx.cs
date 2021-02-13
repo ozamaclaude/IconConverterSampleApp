@@ -6,6 +6,7 @@ using System.Linq;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Drawing.Imaging;
 using Image = System.Drawing.Image;
 
 namespace IconConverterApp
@@ -63,7 +64,6 @@ namespace IconConverterApp
                 return;
             }
 
-
             var aa = FileUpLoad1.Width;
             //ResizeImageKeepingAspectRatio();
             var fPfx = CurrentFileNamePrefix();
@@ -100,16 +100,44 @@ namespace IconConverterApp
             return false;
         }
 
-
-
-        private void ResizeImageKeepingAspectRatio(string sourcePath, string destPath)
+        /// <summary>
+        /// 画像ファイルのアスペクト比を維持してサイズを変更
+        /// </summary>
+        /// <param name="sourcePath"></param>
+        /// <param name="destPath"></param>
+        private void ResizeImageKeepingAspectRatio(
+            string sourcePath, 
+            string destPath,
+            ImageFormat imgFormat,
+            int width,
+            int height)
         {
             var selected = DropDownList1.SelectedValue;
             if(selected == "0") { return; }
 
             using (Image image = Image.FromFile(sourcePath))
             {
-                var imgWidth = image.Width;
+                // 変更倍率を取得する
+                float scale = Math.Min((float)width / (float)image.Width, (float)height / (float)image.Height);
+
+                // サイズ変更した画像を作成する
+                using (Bitmap bitmap = new Bitmap(width, height))
+                using (Graphics graphics = Graphics.FromImage(bitmap))
+                {
+                    // 変更サイズを取得する
+                    int widthToScale = (int)(image.Width * scale);
+                    int heightToScale = (int)(image.Height * scale);
+
+                    // 背景色を塗る
+                    SolidBrush solidBrush = new SolidBrush(Color.Black);
+                    graphics.FillRectangle(solidBrush, new RectangleF(0, 0, width, height));
+
+                    // サイズ変更した画像に、左上を起点に変更する画像を描画する
+                    graphics.DrawImage(image, 0, 0, widthToScale, heightToScale);
+
+                    // サイズ変更した画像を保存する
+                    bitmap.Save(destPath, imgFormat);
+                }
             }
         }
         protected void GridView1_PageIndexChanging(object sender, GridViewPageEventArgs e)
