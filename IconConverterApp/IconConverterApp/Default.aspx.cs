@@ -91,7 +91,6 @@ namespace IconConverterApp
                     Icon.FromHandle(bitmap.GetHicon()).Save(stream);
                 }
             }
-
         }
 
         private bool HasUploadFile()
