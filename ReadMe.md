@@ -6,3 +6,5 @@
 ```
  psql -U postgres -d postgres
 ```
+- TransactionScopeはそのまま実装するとアセンブリ参照エラーが発生。[参照]から参照を追加する。
+

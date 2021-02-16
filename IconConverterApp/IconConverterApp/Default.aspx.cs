@@ -7,6 +7,8 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using System.Drawing.Imaging;
+using Npgsql;
+using System.Transactions;
 using Image = System.Drawing.Image;
 
 namespace IconConverterApp
@@ -23,6 +25,9 @@ namespace IconConverterApp
 
         private List<RegisteredFile> _registeredFiles = new List<RegisteredFile>();
         private const string _savePath = @"C:\\Users\M.Ozama\forJob\dev\temp\";
+
+        private const string _connectionString 
+            = "Server=localhost;Port=5432;User ID=postgres;Database=postgres;Password=postgres;Enlist=true";
 
         private int _orgImageWidth { get; set; }
         private int _orgImageHeight { get; set; }
@@ -189,11 +194,31 @@ namespace IconConverterApp
             }
         }
 
+        private void AddFile()
+        {
+            NpgsqlCommand cmd = null;
+            string cmd_str = null;
+            using (TransactionScope ts = new TransactionScope())
+            {
+                using (NpgsqlConnection conn = new NpgsqlConnection(_connectionString))
+                {
+                    conn.Open();
+                    // TODO: プレースホルダを使う
+                    cmd_str = "insert into stored_files values ";
+
+                    cmd = new NpgsqlCommand(cmd_str, conn);
+                    cmd.ExecuteNonQuery();
+
+                }
+
+
+            }
+        }
+
         private static string CurrentFileNamePrefix()
         {
             return DateTime.Now.ToString("yyyyMMddHHmmss_");
         }
-
 
     }
 }
