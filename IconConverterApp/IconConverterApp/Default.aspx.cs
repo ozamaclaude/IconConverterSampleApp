@@ -20,6 +20,7 @@ namespace IconConverterApp
         public string RegisterFileName { get; set; }
         public string Notes { get; set; }
     }
+
     public partial class _Default : Page
     {
 
@@ -194,24 +195,31 @@ namespace IconConverterApp
             }
         }
 
-        private void AddFile()
+        private void AddFile(string fileName, string filePath)
         {
             NpgsqlCommand cmd = null;
             string cmd_str = null;
-            using (TransactionScope ts = new TransactionScope())
             {
                 using (NpgsqlConnection conn = new NpgsqlConnection(_connectionString))
                 {
                     conn.Open();
+
+                    // ファイルの内容をバイト配列に展開
+                    byte[] bytes = File.ReadAllBytes(filePath);
+
                     // TODO: プレースホルダを使う
-                    cmd_str = "insert into stored_files values ";
-
+                    cmd_str = "insert into stored_files (register_date, register_filename, remarks, register_image) values (:currentDate, :fName, :pngImage)";
                     cmd = new NpgsqlCommand(cmd_str, conn);
+                    cmd.Parameters.Add(
+                        new NpgsqlParameter("currentDate", NpgsqlTypes.NpgsqlDbType.Timestamp) { Value = DateTime.Now.ToString()});
+                    cmd.Parameters.Add(
+                        new NpgsqlParameter("fName", NpgsqlTypes.NpgsqlDbType.Text) { Value = fileName });
+                    // https://symfoware.blog.fc2.com/blog-entry-1280.html
+                    cmd.Parameters.Add(
+                        new NpgsqlParameter("pngImage", NpgsqlTypes.NpgsqlDbType.Bytea) {Value = bytes});
+
                     cmd.ExecuteNonQuery();
-
                 }
-
-
             }
         }
 
