@@ -10,6 +10,7 @@ using System.Drawing.Imaging;
 using Npgsql;
 using System.Transactions;
 using Image = System.Drawing.Image;
+using System.Data;
 
 namespace IconConverterApp
 {
@@ -75,8 +76,11 @@ namespace IconConverterApp
             var fPfx = CurrentFileNamePrefix();
             //var pngFileName = fPfx + "_output.png";
             var pngPath = Path.Combine(_savePath, fPfx + FileUpLoad1.FileName);
-
             FileUpLoad1.SaveAs(Path.Combine(_savePath, fPfx + FileUpLoad1.FileName));
+
+            AddFile(fPfx + FileUpLoad1.FileName, pngPath);
+            return;
+            
             Label1.Text = "File Uploaded: " + FileUpLoad1.FileName;
 
             _registeredFiles.Add(new RegisteredFile
@@ -95,6 +99,28 @@ namespace IconConverterApp
                 {
                     Bitmap bitmap = (Bitmap)System.Drawing.Image.FromFile(pngPath);
                     Icon.FromHandle(bitmap.GetHicon()).Save(stream);
+                }
+            }
+        }
+
+        private void InitializeUploadFileList(string fileName)
+        {
+            using (TransactionScope ts = new TransactionScope())
+            {
+                using (NpgsqlConnection conn = new NpgsqlConnection(_connectionString))
+                {
+                    var dt = new DataTable();
+                    var cmd_str = "select * from stored_files";
+                    NpgsqlCommand cmd = new NpgsqlCommand(cmd_str, conn);
+                    NpgsqlDataAdapter da = new NpgsqlDataAdapter(cmd);
+                    da.Fill(dt);
+
+                    for (int i = 0; i < dt.Rows.Count; i++)
+                    {
+                        var a = dt.Rows[i][0];
+                        var b = dt.Rows[i][1];
+                        var c = dt.Rows[i][2];
+                    }
                 }
             }
         }
@@ -199,28 +225,63 @@ namespace IconConverterApp
         {
             NpgsqlCommand cmd = null;
             string cmd_str = null;
-            {
-                using (NpgsqlConnection conn = new NpgsqlConnection(_connectionString))
-                {
-                    conn.Open();
+            var nowdate = DateTime.Now;
+            var now = nowdate.ToString();
+            var regDate = nowdate.ToString("yyyy/MM/dd HH:mm:ss");
 
+            using (TransactionScope ts = new TransactionScope())
+            {
+                using (NpgsqlConnection conn1 = new NpgsqlConnection(_connectionString))
+                {
+                    conn1.Open();
                     // ファイルの内容をバイト配列に展開
                     byte[] bytes = File.ReadAllBytes(filePath);
 
                     // TODO: プレースホルダを使う
-                    cmd_str = "insert into stored_files (register_date, register_filename, remarks, register_image) values (:currentDate, :fName, :pngImage)";
-                    cmd = new NpgsqlCommand(cmd_str, conn);
+                    cmd_str = "insert into stored_files (register_date, register_filename, register_image) values (:currentDate, :fName, :pngImage)";
+                    cmd = new NpgsqlCommand(cmd_str, conn1);
                     cmd.Parameters.Add(
-                        new NpgsqlParameter("currentDate", NpgsqlTypes.NpgsqlDbType.Timestamp) { Value = DateTime.Now.ToString()});
+                        new NpgsqlParameter("currentDate", NpgsqlTypes.NpgsqlDbType.Text) { Value = now });
+                        //new NpgsqlParameter("currentDate", NpgsqlTypes.NpgsqlDbType.TimestampTz) { Value = now });
                     cmd.Parameters.Add(
                         new NpgsqlParameter("fName", NpgsqlTypes.NpgsqlDbType.Text) { Value = fileName });
                     // https://symfoware.blog.fc2.com/blog-entry-1280.html
                     cmd.Parameters.Add(
-                        new NpgsqlParameter("pngImage", NpgsqlTypes.NpgsqlDbType.Bytea) {Value = bytes});
+                        new NpgsqlParameter("pngImage", NpgsqlTypes.NpgsqlDbType.Bytea) { Value = bytes });
 
                     cmd.ExecuteNonQuery();
+
                 }
+                using (NpgsqlConnection conn2 = new NpgsqlConnection(_connectionString))
+                {
+                    conn2.Open();
+
+                    var dt = new DataTable();
+                    cmd_str = "select * from stored_files where register_date = :currentDate";
+                    cmd = new NpgsqlCommand(cmd_str, conn2);
+                    cmd.Parameters.Add(
+                        new NpgsqlParameter("currentDate", NpgsqlTypes.NpgsqlDbType.Timestamp) { Value = now });
+                    NpgsqlDataAdapter da = new NpgsqlDataAdapter(cmd);
+                    da.Fill(dt);
+
+                    var a = dt.Rows[0][0];
+                    var b = dt.Rows[0][1];
+                    var c = dt.Rows[0][2];
+
+                    // gridviewに追加
+                    // 一度、登録したレコードを抽出してから設定したほうがよさそう
+                    _registeredFiles.Add(new RegisteredFile
+                    {
+                        RegisterNumber = "",
+                        RegisterDate = DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"),
+                        RegisterFileName = FileUpLoad1.FileName
+                    }); ;
+                    LoadGrid();
+
+                }
+                ts.Complete();
             }
+
         }
 
         private static string CurrentFileNamePrefix()

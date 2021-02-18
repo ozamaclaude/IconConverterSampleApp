@@ -8,3 +8,5 @@
 ```
 - TransactionScopeはそのまま実装するとアセンブリ参照エラーが発生。[参照]から参照を追加する。
 
+#### 問題
+- 「Can't write CLR type System.String with handler type TimestampHandler」がcmd.ExecuteNonQuery();で発生
