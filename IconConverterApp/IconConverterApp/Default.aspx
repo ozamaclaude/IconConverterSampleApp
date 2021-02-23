@@ -66,5 +66,16 @@
             </asp:Calendar>
         </div>
     </div>
+    <div class="row">
+        <div class="col-md-8">
+            <h2>パンくずリスト</h2>
+        
+            <ol class="breadcrumb">
+                <li><a href="http://bootstrap3.cyberlab.info"><span class="glyphicon glyphicon-home" aria-hidden="true"></span> Bootstrap3日本語リファレンス</a></li>
+                <li><a href="http://bootstrap3.cyberlab.info/components/">コンポーネント</a></li>
+                <li class="active">パンくず</li>
+            </ol>
+        </div>
+    </div>
 
 </asp:Content>
